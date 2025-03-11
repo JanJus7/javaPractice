@@ -2,7 +2,7 @@ package lab1;
 
 import java.util.Arrays;
 
-public class QUBOProblem {
+public final class QUBOProblem {
     
     private double[][] couplingMatrix;
     private int[] optimalState;
@@ -63,12 +63,8 @@ public class QUBOProblem {
             return false;
         }
         
-        if (Arrays.equals(this.optimalState, other.optimalState) && 
-            this.optimalStateValue == other.optimalStateValue) {
-            return true;
-        }
-
-        return false;
+        return Arrays.equals(this.optimalState, other.optimalState) && 
+                this.optimalStateValue == other.optimalStateValue;
     }
 
     public double[][] getCouplingMatrix() {
