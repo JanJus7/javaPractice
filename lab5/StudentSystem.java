@@ -1,9 +1,9 @@
 package lab5;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class StudentSystem implements StudentInterface {
     private final List<Student> students = new ArrayList<>();
@@ -51,8 +51,13 @@ public class StudentSystem implements StudentInterface {
 
     @Override
     public Map<Float, List<Student>> groupByAverage() {
-        return students.stream()
-                       .collect(Collectors.groupingBy(Student::getAverageGrade));
+        Map<Float, List<Student>> grouped = new HashMap<>();
+        for (Student s : students) {
+            float avg = s.getAverageGrade();
+            grouped.computeIfAbsent(avg, k -> new ArrayList<>())
+                    .add(s);
+        }
+        return grouped;
     }
 }
 
