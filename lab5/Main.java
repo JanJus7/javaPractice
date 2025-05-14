@@ -24,8 +24,8 @@ public class Main {
         });
 
         System.out.println("======== Group by Avg Grade ========");
-        studentSystem.groupByAverage().forEach(student -> {
-            System.out.println(student.getIndex() + " " + student.getSurname() + " " + student.getAverageGrade());
+        studentSystem.groupByAverage().forEach((avg,list) -> {
+            System.out.println("Grade " + avg + ": " + list.size() + " student(s)");
         });
     }
 }

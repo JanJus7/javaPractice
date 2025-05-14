@@ -1,6 +1,7 @@
 package lab5;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StudentInterface {
     void addStudent(int index, String surname, String department, float averageGrade, int yearOfStudy);
@@ -11,5 +12,5 @@ public interface StudentInterface {
 
     List<Student> findByAverageRangeGrade(float min, float max);
 
-    List<Student> groupByAverage();
+    Map<Float,List<Student>> groupByAverage();
 }

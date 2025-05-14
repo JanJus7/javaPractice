@@ -2,9 +2,10 @@ package lab5;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StudentSystem implements StudentInterface {
-    private float x;
     private final List<Student> students = new ArrayList<>();
 
     @Override
@@ -49,16 +50,9 @@ public class StudentSystem implements StudentInterface {
     }
 
     @Override
-    public List<Student> groupByAverage() {
-        List<Student> result = new ArrayList<>();
-        for (x = 2.0f; x <= 5.0f; x += 0.5f) {
-            for (Student student : students) {
-                if (student.getAverageGrade() == x) {
-                    result.add(student);
-                }
-            }
-        }
-        return result;
+    public Map<Float, List<Student>> groupByAverage() {
+        return students.stream()
+                       .collect(Collectors.groupingBy(Student::getAverageGrade));
     }
 }
 
