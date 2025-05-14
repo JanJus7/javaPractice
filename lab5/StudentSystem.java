@@ -21,13 +21,17 @@ public class StudentSystem {
         return result;
     }
 
-    public double calculateAverageGrade(int index) {
+    public double calculateAverageGrade(String department) {
+        double sum = 0;
+        int count = 0;
         for (Student student : students) {
-            if (student.getIndex() == index) {
-                return student.getAverageGrade();
+            if (student.getDepartment().equalsIgnoreCase(department)) {
+                sum += student.getAverageGrade();
+                count++;
             }
         }
-        return -1;
+        return count == 0 ? 0 : sum / count;
+
     }
 
     public List<Student> findByAverageRangeGrade(float min, float max) {

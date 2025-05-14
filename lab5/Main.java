@@ -15,7 +15,8 @@ public class Main {
             System.out.println(student.getIndex() + " " + student.getSurname() + " " + student.getAverageGrade());
         });
 
-
+        System.out.println("======== Avg Grade Mathematics ========");
+        System.out.println(studentSystem.calculateAverageGrade("Mathematics"));
 
         System.out.println("======== Avg Grade 2.0 - 4.0 ========");
         studentSystem.findByAverageRangeGrade(2.0f, 4.0f).forEach(student -> {
