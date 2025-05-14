@@ -3,14 +3,16 @@ package lab5;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentSystem {
+public class StudentSystem implements StudentInterface {
     private float x;
     private final List<Student> students = new ArrayList<>();
 
+    @Override
     public void addStudent(int index, String surname, String department, float averageGrade, int yearOfStudy) {
         students.add(new Student(index, surname, department, averageGrade, yearOfStudy));
     }
 
+    @Override
     public List<Student> findByDepartment(String department) {
         List<Student> result = new ArrayList<>();
         for (Student student : students) {
@@ -21,6 +23,7 @@ public class StudentSystem {
         return result;
     }
 
+    @Override
     public double calculateAverageGrade(String department) {
         double sum = 0;
         int count = 0;
@@ -34,6 +37,7 @@ public class StudentSystem {
 
     }
 
+    @Override
     public List<Student> findByAverageRangeGrade(float min, float max) {
         List<Student> result = new ArrayList<>();
         for (Student student : students) {
@@ -44,6 +48,7 @@ public class StudentSystem {
         return result;
     }
 
+    @Override
     public List<Student> groupByAverage() {
         List<Student> result = new ArrayList<>();
         for (x = 2.0f; x <= 5.0f; x += 0.5f) {
