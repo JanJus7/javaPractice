@@ -19,17 +19,24 @@ public class Intersection extends TrafficElement {
         directionQueue.put(direction, directionQueue.get(direction) + 1);
     }
 
-    public List<Vehicle> getVehicles() { return vehicles; }
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
 
-    public Map<String, Integer> getDirectionQueue() { return directionQueue; }
+    public Map<String, Integer> getDirectionQueue() {
+        return directionQueue;
+    }
 
     @Override
     public void updateStatus() {
-        for (Map.Entry<String, Integer> entry : directionQueue.entrySet()) {
-            int count = entry.getValue();
-            if (count > 10) status = TrafficStatus.KOREK;
-            else if (count > 5) status = TrafficStatus.WZMOZONY_RUCH;
-            else status = TrafficStatus.NORMALNY;
+        int max = directionQueue.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+
+        if (max > 10) {
+            status = TrafficStatus.KOREK;
+        } else if (max > 5) {
+            status = TrafficStatus.WZMOZONY_RUCH;
+        } else {
+            status = TrafficStatus.NORMALNY;
         }
     }
 }

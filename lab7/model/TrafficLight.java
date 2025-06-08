@@ -16,6 +16,10 @@ public class TrafficLight extends TrafficElement {
         return colour;
     }
 
+    public void setColour(Colours colour) {
+        this.colour = colour;
+    }
+
     public int getTimeToSwitch() {
         return timeToSwitch;
     }
