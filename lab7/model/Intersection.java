@@ -3,8 +3,8 @@ package model;
 import java.util.*;
 
 public class Intersection extends TrafficElement {
-    private List<Vehicle> vehicles = new ArrayList<>();
-    private Map<String, Integer> directionQueue = new HashMap<>();
+    private final List<Vehicle> vehicles = new ArrayList<>();
+    private final Map<String, Integer> directionQueue = new HashMap<>();
 
     public Intersection(String id) {
         super(id);
