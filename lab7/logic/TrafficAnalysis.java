@@ -46,13 +46,13 @@ public class TrafficAnalysis {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public static Map<String, Integer> totalWaitTimeByIntersection(List<Intersection> intersections) {
-        return intersections.stream()
-                .collect(Collectors.toMap(
-                        Intersection::getId,
-                        i -> i.getVehicles().stream()
-                                .mapToInt(Vehicle::getWaitTime)
-                                .sum()));
+    public static Map<String, Integer> totalWaitTimeByIntersection(List<Vehicle> vehicles) {
+        return vehicles.stream()
+                .collect(Collectors.groupingBy(
+                        v -> v.getRoute().isEmpty()
+                                ? "Intersection"
+                                : v.getRoute().get(0).split(":")[0],
+                        Collectors.summingInt(Vehicle::getWaitTime)));
     }
 
 }

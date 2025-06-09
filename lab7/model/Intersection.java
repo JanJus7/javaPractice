@@ -1,6 +1,7 @@
 package model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Intersection extends TrafficElement {
     private final List<Vehicle> vehicles = new ArrayList<>();
@@ -29,13 +30,18 @@ public class Intersection extends TrafficElement {
 
     @Override
     public void updateStatus() {
-        int max = directionQueue.values().stream().mapToInt(Integer::intValue).max().orElse(0);
+        Map<String, Long> counts = vehicles.stream()
+                .filter(v -> !v.getRoute().isEmpty())
+                .map(v -> v.getRoute().get(0).split(":")[1])
+                .collect(Collectors.groupingBy(d -> d, Collectors.counting()));
 
-        if (max > 10) {
+        long max = counts.values().stream().mapToLong(Long::longValue).max().orElse(0);
+
+        if (max > 24) {
             status = TrafficStatus.KOREK;
-        } else if (max > 5) {
+        } else if (max > 10 && max <= 24) {
             status = TrafficStatus.WZMOZONY_RUCH;
-        } else {
+        } else if (max <= 10) {
             status = TrafficStatus.NORMALNY;
         }
     }
