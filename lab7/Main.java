@@ -6,6 +6,7 @@ import model.*;
 public class Main {
     public static void main(String[] args) {
         Intersection intersection = new Intersection("Intersection");
+        Intersection intersection2 = new Intersection("Intersection2");
         List<Vehicle> vehicles = new ArrayList<>();
 
         Map<String, String> directionMap = Map.of(
@@ -16,53 +17,113 @@ public class Main {
         String[] entryDirections = { "S", "N", "E", "W" };
 
         for (int i = 1; i <= 87; i++) {
+            List<String> route = new ArrayList<>();
             String entry = entryDirections[(i - 1) % 4];
             String exit = directionMap.get(entry);
-            Vehicle car = new Car("Car " + i, new ArrayList<>(List.of("Intersection:" + exit)));
+            switch (entry) {
+                case "N" -> {
+                    route.add("Intersection:S");
+                    route.add("Intersection2:S");
+                }
+                case "S" -> {
+                    route.add("Intersection:N");
+                    route.add("Intersection2:N");
+                }
+                default -> route.add("Intersection:" + exit);
+            }
+            Vehicle car = new Car("Car " + i, route);
             vehicles.add(car);
             intersection.addVehicle(car, entry);
         }
+
         for (int i = 1; i <= 10; i++) {
+            List<String> route = new ArrayList<>();
             String entry = entryDirections[(i - 1) % 4];
             String exit = directionMap.get(entry);
-            Vehicle bus = new Bus("Bus " + i, new ArrayList<>(List.of("Intersection:" + exit)));
+            switch (entry) {
+                case "N" -> {
+                    route.add("Intersection:S");
+                    route.add("Intersection2:S");
+                }
+                case "S" -> {
+                    route.add("Intersection:N");
+                    route.add("Intersection2:N");
+                }
+                default -> route.add("Intersection:" + exit);
+            }
+            Vehicle bus = new Bus("Bus " + i, route);
             vehicles.add(bus);
             intersection.addVehicle(bus, entry);
         }
+
         for (int i = 1; i <= 3; i++) {
+            List<String> route = new ArrayList<>();
             String entry = entryDirections[(i - 1) % 3];
             String exit = directionMap.get(entry);
-            Vehicle amb = new EmergencyVehicle("Emergency " + i, new ArrayList<>(List.of("Intersection:" + exit)));
+            switch (entry) {
+                case "N" -> {
+                    route.add("Intersection:S");
+                    route.add("Intersection2:S");
+                }
+                case "S" -> {
+                    route.add("Intersection:N");
+                    route.add("Intersection2:N");
+                }
+                default -> route.add("Intersection:" + exit);
+            }
+            Vehicle amb = new EmergencyVehicle("Amb " + i, route);
             vehicles.add(amb);
             intersection.addVehicle(amb, entry);
         }
 
-        List<Intersection> intersections = List.of(intersection);
+        List<Intersection> intersections = List.of(intersection, intersection2);
 
         Map<String, TrafficLight> lights = new HashMap<>();
+        Map<String, TrafficLight> lights2 = new HashMap<>();
+
         for (String dir : directionMap.values()) {
             lights.put(dir, new TrafficLight("Intersection:" + dir, Colours.CZERWONY, Colours.ZOLTY));
+            lights2.put(dir, new TrafficLight("Intersection2:" + dir, Colours.CZERWONY, Colours.ZOLTY));
         }
-
-        intersection.updateStatus();
 
         System.out.println("\n---> START <---");
         System.out.println("Vehicles ammount: " + vehicles.size());
-        System.out.println("Avg wait time (Car): " +
+        // System.out.println("Avg wait time (Car): " +
+        // TrafficAnalysis.averageWaitTime(vehicles, Car.class));
+        // System.out.println("Avg wait time (Bus): " +
+        // TrafficAnalysis.averageWaitTime(vehicles, Bus.class));
+        // System.out.println("Avg wait time (Emergency): " +
+        // TrafficAnalysis.averageWaitTime(vehicles, EmergencyVehicle.class));
+        System.out.println("Intersection statuses " + TrafficAnalysis.intersectionStatuses(intersections));
+        System.out.println("Vehicles ammount by type and direction: " +
+                TrafficAnalysis.vehicleCountByPriorityAndDirection(intersections));
+        // System.out.println("Total wait time on the intersection: " +
+        // TrafficAnalysis.totalWaitTimeByIntersection(vehicles));
+
+        simulateIntersection(intersection, lights, directionMap, intersection2);
+        simulateIntersection(intersection2, lights2, directionMap, null);
+
+        System.out.println("\n---> END <---");
+        System.out.println("Vehicles ammount: " + vehicles.size());
+        System.out.println("Avg wait time(Car): " +
                 TrafficAnalysis.averageWaitTime(vehicles, Car.class));
         System.out.println("Avg wait time (Bus): " +
                 TrafficAnalysis.averageWaitTime(vehicles, Bus.class));
         System.out.println("Avg wait time (Emergency): " +
                 TrafficAnalysis.averageWaitTime(vehicles, EmergencyVehicle.class));
-        System.out.println("Intersection statuses " + TrafficAnalysis.intersectionStatuses(intersections));
+        System.out.println("Intersection statuses: " + TrafficAnalysis.intersectionStatuses(intersections));
         System.out.println("Vehicles ammount by type and direction: " +
                 TrafficAnalysis.vehicleCountByPriorityAndDirection(intersections));
         System.out.println("Total wait time on the intersection: " +
                 TrafficAnalysis.totalWaitTimeByIntersection(vehicles));
 
+    }
+
+    private static void simulateIntersection(Intersection intersection, Map<String, TrafficLight> lights,
+            Map<String, String> directionMap, Intersection next) {
         int time = 0;
         while (!intersection.getVehicles().isEmpty()) {
-            System.out.println("\n---> Time: " + time + " <---");
+            System.out.println("\n---> Time: " + time + " | " + intersection.getId() + " <---");
 
             for (Vehicle v : intersection.getVehicles()) {
                 v.updateStatus();
@@ -80,14 +141,21 @@ public class Main {
                         continue;
 
                     String dest = v.getRoute().get(0);
-                    if (dest.equals("Intersection:" + greenDir)) {
+                    String expected = intersection.getId() + ":" + greenDir;
+                    if (dest.equals(expected)) {
                         v.getRoute().remove(0);
 
                         String entryDir = getEntryDirection(v, directionMap);
                         intersection.getDirectionQueue().put(
                                 entryDir,
                                 intersection.getDirectionQueue().get(entryDir) - 1);
-                        passed.add(v);
+
+                        if (v.getRoute().isEmpty() || next == null) {
+                            passed.add(v);
+                        } else {
+                            next.addVehicle(v, entryDir);
+                            passed.add(v);
+                        }
                     }
                 }
 
@@ -107,21 +175,6 @@ public class Main {
 
         intersection.getDirectionQueue().replaceAll((k, v) -> 0);
         intersection.updateStatus();
-
-        System.out.println("\n---> END <---");
-        System.out.println("Vehicles ammount: " + vehicles.size());
-        System.out.println("Avg wait time(Car): " +
-                TrafficAnalysis.averageWaitTime(vehicles, Car.class));
-        System.out.println("Avg wait time (Bus): " +
-                TrafficAnalysis.averageWaitTime(vehicles, Bus.class));
-        System.out.println("Avg wait time (Emergency): " +
-                TrafficAnalysis.averageWaitTime(vehicles, EmergencyVehicle.class));
-        System.out.println("Intersection statuses: " + TrafficAnalysis.intersectionStatuses(intersections));
-        System.out.println("Vehicles ammount by type and direction: " +
-                TrafficAnalysis.vehicleCountByPriorityAndDirection(intersections));
-        System.out.println("Total wait time on the intersection: " +
-                TrafficAnalysis.totalWaitTimeByIntersection(vehicles));
-
     }
 
     private static String getEntryDirection(Vehicle v, Map<String, String> map) {
