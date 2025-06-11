@@ -7,6 +7,7 @@ public class Main {
     public static void main(String[] args) {
         Intersection intersection = new Intersection("Intersection");
         Intersection intersection2 = new Intersection("Intersection2");
+        Intersection intersection3 = new Intersection("Intersection3");
         List<Vehicle> vehicles = new ArrayList<>();
 
         Map<String, String> directionMap = Map.of(
@@ -19,71 +20,118 @@ public class Main {
         for (int i = 1; i <= 87; i++) {
             List<String> route = new ArrayList<>();
             String entry = entryDirections[(i - 1) % 4];
-            String exit = directionMap.get(entry);
+            // String exit = directionMap.get(entry);
             switch (entry) {
                 case "N" -> {
                     route.add("Intersection:S");
                     route.add("Intersection2:S");
+                    Vehicle car = new Car("Car " + i, route);
+                    vehicles.add(car);
+                    intersection.addVehicle(car, "N");
                 }
                 case "S" -> {
-                    route.add("Intersection:N");
                     route.add("Intersection2:N");
+                    route.add("Intersection:N");
+                    Vehicle car = new Car("Car " + i, route);
+                    vehicles.add(car);
+                    intersection2.addVehicle(car, "S");
                 }
-                default -> route.add("Intersection:" + exit);
+                case "W" -> {
+                    route.add("Intersection3:E");
+                    route.add("Intersection:E");
+                    Vehicle car = new Car("Car " + i, route);
+                    vehicles.add(car);
+                    intersection3.addVehicle(car, "W");
+                }
+                case "E" -> {
+                    route.add("Intersection:W");
+                    Vehicle car = new Car("Car " + i, route);
+                    vehicles.add(car);
+                    intersection.addVehicle(car, "E");
+                }
             }
-            Vehicle car = new Car("Car " + i, route);
-            vehicles.add(car);
-            intersection.addVehicle(car, entry);
         }
 
         for (int i = 1; i <= 10; i++) {
             List<String> route = new ArrayList<>();
             String entry = entryDirections[(i - 1) % 4];
-            String exit = directionMap.get(entry);
+            // String exit = directionMap.get(entry);
             switch (entry) {
                 case "N" -> {
                     route.add("Intersection:S");
                     route.add("Intersection2:S");
+                    Vehicle bus = new Bus("Bus " + i, route);
+                    vehicles.add(bus);
+                    intersection.addVehicle(bus, "N");
                 }
                 case "S" -> {
-                    route.add("Intersection:N");
                     route.add("Intersection2:N");
+                    route.add("Intersection:N");
+                    Vehicle bus = new Bus("Bus " + i, route);
+                    vehicles.add(bus);
+                    intersection2.addVehicle(bus, "S");
                 }
-                default -> route.add("Intersection:" + exit);
+                case "W" -> {
+                    route.add("Intersection3:E");
+                    route.add("Intersection:E");
+                    Vehicle bus = new Bus("Bus " + i, route);
+                    vehicles.add(bus);
+                    intersection3.addVehicle(bus, "W");
+                }
+                case "E" -> {
+                    route.add("Intersection:W");
+                    Vehicle bus = new Bus("Bus " + i, route);
+                    vehicles.add(bus);
+                    intersection.addVehicle(bus, "E");
+                }
             }
-            Vehicle bus = new Bus("Bus " + i, route);
-            vehicles.add(bus);
-            intersection.addVehicle(bus, entry);
         }
 
         for (int i = 1; i <= 3; i++) {
             List<String> route = new ArrayList<>();
             String entry = entryDirections[(i - 1) % 3];
-            String exit = directionMap.get(entry);
+            // String exit = directionMap.get(entry);
             switch (entry) {
                 case "N" -> {
                     route.add("Intersection:S");
                     route.add("Intersection2:S");
+                    Vehicle amb = new EmergencyVehicle("Amb " + i, route);
+                    vehicles.add(amb);
+                    intersection.addVehicle(amb, "N");
                 }
                 case "S" -> {
-                    route.add("Intersection:N");
                     route.add("Intersection2:N");
+                    route.add("Intersection:N");
+                    Vehicle amb = new EmergencyVehicle("Amb " + i, route);
+                    vehicles.add(amb);
+                    intersection2.addVehicle(amb, "S");
                 }
-                default -> route.add("Intersection:" + exit);
+                case "W" -> {
+                    route.add("Intersection3:E");
+                    route.add("Intersection:E");
+                    Vehicle amb = new EmergencyVehicle("Amb " + i, route);
+                    vehicles.add(amb);
+                    intersection3.addVehicle(amb, "W");
+                }
+                case "E" -> {
+                    route.add("Intersection:W");
+                    Vehicle amb = new EmergencyVehicle("Amb " + i, route);
+                    vehicles.add(amb);
+                    intersection.addVehicle(amb, "E");
+                }
             }
-            Vehicle amb = new EmergencyVehicle("Amb " + i, route);
-            vehicles.add(amb);
-            intersection.addVehicle(amb, entry);
         }
 
-        List<Intersection> intersections = List.of(intersection, intersection2);
+        List<Intersection> intersections = List.of(intersection, intersection2, intersection3);
 
         Map<String, TrafficLight> lights = new HashMap<>();
         Map<String, TrafficLight> lights2 = new HashMap<>();
+        Map<String, TrafficLight> lights3 = new HashMap<>();
 
         for (String dir : directionMap.values()) {
             lights.put(dir, new TrafficLight("Intersection:" + dir, Colours.CZERWONY, Colours.ZOLTY));
             lights2.put(dir, new TrafficLight("Intersection2:" + dir, Colours.CZERWONY, Colours.ZOLTY));
+            lights3.put(dir, new TrafficLight("Intersection3:" + dir, Colours.CZERWONY, Colours.ZOLTY));
         }
 
         System.out.println("\n---> START <---");
@@ -102,6 +150,7 @@ public class Main {
 
         simulateIntersection(intersection, lights, directionMap, intersection2);
         simulateIntersection(intersection2, lights2, directionMap, null);
+        simulateIntersection(intersection3, lights3, directionMap, intersection);
 
         System.out.println("\n---> END <---");
         System.out.println("Vehicles ammount: " + vehicles.size());
